@@ -390,6 +390,7 @@
     document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.id === id));
     $('#content').scrollTop = 0;
     closeSidebar();
+    try { history.replaceState(null, '', '#' + id); } catch (e) {}
   }
 
   function closeSidebar() {
@@ -410,5 +411,10 @@
 
   // boot
   buildNav();
-  open('ceo');
+  function fromHash() {
+    const id = (location.hash || '').replace('#', '');
+    return DASHBOARDS.some(x => x.id === id) ? id : 'ceo';
+  }
+  open(fromHash());
+  window.addEventListener('hashchange', () => open(fromHash()));
 })();
