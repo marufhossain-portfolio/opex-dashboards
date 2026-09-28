@@ -379,13 +379,17 @@
   // registry + nav
   // ============================================================
   const DASHBOARDS = [
-    { id: 'ceo', name: 'CEO Overview', icon: '💼', render: dashCeo },
     { id: 'production', name: 'Production Dashboard', icon: '🏭', render: dashProduction },
     { id: 'maintenance', name: 'Maintenance Analysis', icon: '🔧', render: dashMaintenance },
     { id: 'delivery', name: 'Delivery Analysis', icon: '🚚', render: dashDelivery },
     { id: 'planning', name: 'Production Planning', icon: '📋', render: dashPlanning },
     { id: 'quality', name: 'Quality', icon: '✅', render: dashQuality },
     { id: 'fives', name: '5S Dashboard', icon: '🌟', render: dashFives },
+  ];
+
+  // CEO kept as a hidden route (loaded from the OPEX Intelligence Suite, not shown in this nav)
+  const HIDDEN = [
+    { id: 'ceo', name: 'CEO Overview', render: dashCeo },
   ];
 
   function buildNav() {
@@ -395,7 +399,7 @@
   }
 
   function open(id) {
-    const d = DASHBOARDS.find(x => x.id === id);
+    const d = DASHBOARDS.find(x => x.id === id) || HIDDEN.find(x => x.id === id);
     if (!d) return;
     destroyAll();
     $('#crumb').textContent = d.name;
@@ -426,7 +430,7 @@
   buildNav();
   function fromHash() {
     const id = (location.hash || '').replace('#', '');
-    return DASHBOARDS.some(x => x.id === id) ? id : 'ceo';
+    return (DASHBOARDS.some(x => x.id === id) || HIDDEN.some(x => x.id === id)) ? id : 'production';
   }
   open(fromHash());
   window.addEventListener('hashchange', () => open(fromHash()));
