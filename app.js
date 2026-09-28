@@ -274,44 +274,57 @@
   // ============================================================
   function dashCeo(host) {
     host.innerHTML =
-      '<div class="dash-head"><h1>CEO Overview</h1><p>Executive summary — revenue, profitability, operations and quality at a glance.</p></div>' +
+      '<div class="dash-head"><h1>CEO Overview</h1><p>Executive P&amp;L and operations — revenue, COGS, margin, profitability and operational health at a glance.</p></div>' +
       '<div class="kpi-grid">' +
         kpi('💰', 'Revenue', '$4.82M', '▲ 6.4% MoM', 'up') +
+        kpi('🏭', 'COGS', '$3.21M', '66.6% of revenue', 'flat') +
         kpi('📊', 'Gross Profit', '$1.61M', '▲ 5.2%', 'up') +
+        kpi('📈', 'Gross Margin', '33.4%', '▲ 0.8 pp', 'up') +
+        kpi('💵', 'Net Profit', '$840K', '▲ 9.1%', 'up') +
         kpi('🎯', 'OEE', '78.6%', '▲ 2.4%', 'up') +
         kpi('🚚', 'OTIF', '92.4%', '▲ 1.8%', 'up') +
         kpi('✅', 'FPY', '97.6%', '▲ 0.7%', 'up') +
-        kpi('🌟', '5S Score', '91', '▲ 3', 'up') +
       '</div>' +
       '<div class="grid grid-2-1">' +
-        panel('Revenue vs Cost', '$ thousands · 6 months', chartBox('cRev', 'tall')) +
-        panel('Business Units', 'revenue share', chartBox('cBu')) +
+        panel('P&amp;L Trend', '$ thousands · 6 months', chartBox('cRev', 'tall')) +
+        panel('Cost Structure', 'share of revenue', chartBox('cCost')) +
       '</div>' +
       '<div class="grid grid-2">' +
+        panel('Margin Trend', 'gross &amp; net %', chartBox('cMargin')) +
         panel('Operational Health', 'this month', '<table class="tbl" id="cOps"></table>') +
-        panel('Key Highlights', '', '<div id="cHigh"></div>') +
-      '</div>';
+      '</div>' +
+      '<div class="panel"><h3>Key Highlights</h3><div class="sub">executive summary</div><div id="cHigh"></div></div>';
 
     const m4 = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
     make('cRev', { type: 'line', data: { labels: m4, datasets: [
       { label: 'Revenue', data: [720, 780, 810, 840, 800, 830], borderColor: C[3], backgroundColor: 'rgba(52,211,153,.12)', fill: true, tension: .35, borderWidth: 2, pointRadius: 3 },
-      { label: 'Cost', data: [480, 500, 515, 530, 520, 525], borderColor: C[5], tension: .35, borderWidth: 2, pointRadius: 3 }
+      { label: 'COGS', data: [480, 515, 530, 550, 530, 553], borderColor: C[5], tension: .35, borderWidth: 2, pointRadius: 3 },
+      { label: 'Gross Profit', data: [240, 265, 280, 290, 270, 277], borderColor: C[0], tension: .35, borderWidth: 2, pointRadius: 3 },
+      { label: 'Net Profit', data: [128, 142, 150, 158, 146, 152], borderColor: C[2], borderDash: [5, 4], tension: .35, borderWidth: 2, pointRadius: 3 }
     ] }, options: lineOpts() });
 
-    make('cBu', { type: 'doughnut', data: { labels: ['LED Lighting', 'Switches & Sockets', 'MCB & Protection', 'Flood & Outdoor', 'Wiring Acc.'], datasets: [{ data: [42, 24, 16, 11, 7], backgroundColor: [C[0], C[1], C[2], C[4], C[3]] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } } } } });
+    make('cCost', { type: 'doughnut', data: { labels: ['COGS — materials & labor', 'SG&A', 'Manufacturing overhead', 'R&D', 'Logistics'], datasets: [{ data: [58, 14, 12, 6, 4], backgroundColor: [C[4], C[0], C[1], C[2], C[5]] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } } } } });
+
+    make('cMargin', { type: 'line', data: { labels: m4, datasets: [
+      { label: 'Gross margin %', data: [33.3, 34.0, 34.6, 34.5, 33.8, 33.4], borderColor: C[3], backgroundColor: 'rgba(52,211,153,.12)', fill: true, tension: .35, borderWidth: 2, pointRadius: 3 },
+      { label: 'Net margin %', data: [17.8, 18.2, 18.5, 18.8, 18.3, 18.3], borderColor: C[2], tension: .35, borderWidth: 2, pointRadius: 3 }
+    ] }, options: { ...lineOpts(), scales: { x: { grid: { display: false } }, y: { min: 10, max: 40, grid: { color: 'rgba(255,255,255,0.04)' } } } } });
 
     const ops = [
-      ['OEE', '78.6%', 'g'], ['Availability', '94.6%', 'g'], ['Performance', '83.1%', 'y'], ['Quality rate', '97.6%', 'g'],
-      ['Downtime', '86.4 hrs', 'y'], ['Delivery OTIF', '92.4%', 'g'], ['Inventory turns', '8.2', 'g'], ['Energy / unit', '-4.8%', 'g'],
+      ['Revenue', '$4.82M', 'g'], ['COGS', '$3.21M', 'y'], ['Gross margin', '33.4%', 'g'],
+      ['Net profit', '$840K', 'g'], ['Net margin', '17.4%', 'g'], ['Cash balance', '$1.24M', 'g'],
+      ['Working capital', '$2.08M', 'y'], ['OEE', '78.6%', 'g'], ['OTIF', '92.4%', 'g'],
+      ['FPY', '97.6%', 'g'], ['Inventory turns', '8.2', 'g'], ['Energy / unit', '-4.8%', 'g'],
     ];
     $('#cOps').innerHTML = '<tr><th>Metric</th><th class="num">Value</th></tr>' +
       ops.map(r => '<tr><td>' + r[0] + '</td><td class="num">' + pill(r[2], r[1]) + '</td></tr>').join('');
 
     $('#cHigh').innerHTML =
-      '<div class="row">📈 Revenue up <b>6.4%</b> — LED lighting led growth.</div>' +
+      '<div class="row">💰 Revenue up <b>6.4%</b> to $4.82M with gross margin of <b>33.4%</b>.</div>' +
+      '<div class="row">🏭 COGS at <b>66.6%</b> of revenue — materials cost held despite volume growth.</div>' +
+      '<div class="row">💵 Net profit <b>$840K</b> (+9.1%), net margin <b>17.4%</b>.</div>' +
       '<div class="row">🔧 OEE improved <b>2.4 pts</b> after TPM rollout on SMT line.</div>' +
-      '<div class="row">✅ Defect PPM down <b>9.1%</b> — soldering rework initiative.</div>' +
-      '<div class="row">🚚 On-time delivery reached <b>92.4%</b>.</div>';
+      '<div class="row">🚚 On-time delivery reached <b>92.4%</b>; defect PPM down <b>9.1%</b>.</div>';
     $('#cHigh').querySelectorAll('.row').forEach(r => { r.style.cssText = 'padding:10px 2px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)'; });
   }
 
