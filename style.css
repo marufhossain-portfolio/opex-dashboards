@@ -106,3 +106,8 @@ h1,h2,h3,.brand,.kpi .v{font-family:'Sora',sans-serif}
   .kpi-grid{grid-template-columns:repeat(2,1fr)}
   .range-pill{display:none}
 }
+
+/* hide sidebar + burger when embedded inside the OPEX Intelligence Suite */
+.embedded .sidebar{display:none}
+.embedded .burger{display:none}
+.embedded .sidebar-overlay{display:none}
